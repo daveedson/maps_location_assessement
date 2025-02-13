@@ -11,17 +11,17 @@ import MapKit
 
 extension MKMapItem: @retroactive Identifiable {
     public var id: String {
-        return UUID().uuidString // Generates a unique ID for each item
+        return UUID().uuidString
     }
 }
 
 struct MapView: View {
     @ObservedObject var mapViewModel = MapViewModel()
-    @State private var mapSelectedItem: MKMapItem? // Store selected location
+    @State private var mapSelectedItem: MKMapItem?
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Display the map with user's location & search results
+            
             Map(
                 coordinateRegion: $mapViewModel.usersLocation,
                 showsUserLocation: true,
@@ -59,11 +59,11 @@ struct MapView: View {
                     .padding()
             }
 
-            // Floating Recenter Button
+            
             VStack {
-                Spacer() // Push button to bottom
+                Spacer() 
                 HStack {
-                    Spacer() // Push button to right
+                    Spacer()
                     Button(action: {
                         mapViewModel.recenterMap()
                     }) {
