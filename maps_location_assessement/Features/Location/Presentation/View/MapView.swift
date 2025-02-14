@@ -1,13 +1,5 @@
-//
-//  MapView.swift
-//  maps_location_assessement
-//
-//  Created by DavidOnoh on 2/12/25.
-//
 import SwiftUI
 import MapKit
-
-
 
 extension MKMapItem: @retroactive Identifiable {
     public var id: String {
@@ -17,11 +9,10 @@ extension MKMapItem: @retroactive Identifiable {
 
 struct MapView: View {
     @ObservedObject var mapViewModel = MapViewModel()
-    @State private var mapSelectedItem: MKMapItem?
+    @State private var selectedLocation: MKMapItem?
 
     var body: some View {
         ZStack(alignment: .top) {
-            
             Map(
                 coordinateRegion: $mapViewModel.usersLocation,
                 showsUserLocation: true,
@@ -29,9 +20,12 @@ struct MapView: View {
             ) { item in
                 MapAnnotation(coordinate: item.placemark.coordinate) {
                     VStack {
-                        Image(systemName: "mappin.circle.fill") // Custom pin icon
+                        Image(systemName: "mappin.circle.fill")
                             .font(.title)
                             .foregroundColor(.red)
+                            .onTapGesture {
+                                selectedLocation = item
+                            }
                         Text(item.placemark.name ?? "Unknown")
                             .font(.caption)
                             .padding(5)
@@ -42,13 +36,11 @@ struct MapView: View {
             }
             .ignoresSafeArea(.all)
             .accentColor(Color(.systemGreen))
-            .selectionDisabled(false)
             .onAppear {
                 mapViewModel.checkIfLocationisAvailable()
             }
 
             VStack {
-                // Search Bar at the Top
                 TextField("Search nearby places", text: $mapViewModel.search)
                     .onSubmit(of: .text) {
                         Task {
@@ -59,9 +51,8 @@ struct MapView: View {
                     .padding()
             }
 
-            
             VStack {
-                Spacer() 
+                Spacer()
                 HStack {
                     Spacer()
                     Button(action: {
@@ -79,14 +70,12 @@ struct MapView: View {
                 }
             }
         }
-
+        .sheet(item: $selectedLocation) { location in
+            LocationDetailView(locationDetailviewModel: LocationDetailViewModel(location: location))
+        }
+        .presentationDetents([.height(550)])
     }
 }
-
-
-
-
-    
 
 #Preview {
     MapView()

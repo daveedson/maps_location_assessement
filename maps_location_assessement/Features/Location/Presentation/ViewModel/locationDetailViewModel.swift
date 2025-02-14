@@ -1,8 +1,21 @@
-//
-//  locationDetailViewModel.swift
-//  maps_location_assessement
-//
-//  Created by DavidOnoh on 2/14/25.
-//
+import SwiftUI
+import MapKit
 
-import Foundation
+class LocationDetailViewModel: ObservableObject {
+    @Published var location: MKMapItem?
+    @Published var lookAround: MKLookAroundScene?
+
+    init(location: MKMapItem? = nil) { 
+        self.location = location
+        fetchLookAroundPreview()
+    }
+
+    func fetchLookAroundPreview() {
+        guard let location else { return }
+        lookAround = nil
+        Task {
+            let request = MKLookAroundSceneRequest(mapItem: location)
+            lookAround = try? await request.scene
+        }
+    }
+}
