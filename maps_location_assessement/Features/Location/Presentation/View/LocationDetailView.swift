@@ -2,10 +2,23 @@ import SwiftUI
 import MapKit
 
 struct LocationDetailView: View {
-    @ObservedObject var locationDetailviewModel = LocationDetailViewModel()
+    @ObservedObject var locationDetailviewModel: LocationDetailViewModel
 
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button(action: {
+                    locationDetailviewModel.toggleFavorite()
+                }) {
+                    Image(systemName: locationDetailviewModel.isFavorite ? "heart.fill" : "heart")
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .foregroundColor(.blue)
+                        .padding()
+                }
+            }
+
             if let location = locationDetailviewModel.location {
                 Text(location.placemark.name ?? "Unknown Place")
                     .font(.title)
